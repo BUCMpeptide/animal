@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动物药多肽数据库</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #27ae60;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), #1a2530);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--accent);
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0.8rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.8)), url('https://images.unsplash.com/photo-1533035353720-f1c6a75cd8ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 5rem 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: 2px solid var(--accent);
+        }
+        
+        .btn:hover {
+            background-color: transparent;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            display: inline-block;
+            background-color: white;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--secondary);
+            z-index: 0;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .stat-card p {
+            color: #777;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 40px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .search-box input:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        select {
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            background-color: white;
+            font-size: 1rem;
+            min-width: 150px;
+        }
+        
+        .data-table {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            font-weight: 600;
+        }
+        
+        tbody tr {
+            transition: var(--transition);
+        }
+        
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .peptide-img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .peptide-img:hover {
+            transform: scale(1.8);
+            z-index: 10;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .about-section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 3rem;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 1.5rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-section h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--accent);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #bbb;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bbb;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            position: relative;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #333;
+            transition: var(--transition);
+        }
+        
+        .close-modal:hover {
+            color: var(--accent);
+        }
+        
+        .modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .peptide-img {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                width: 100%;
+            }
+            
+            select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-dna"></i>
+                <h1>动物药<span>多肽</span>数据库</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">首页</a></li>
+                    <li><a href="#data">浏览数据</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>探索动物药多肽的奥秘</h2>
+            <p>本数据库收集整理了多种动物药材中的多肽信息，包括肽段序列、分子量、结构图等数据，为研究人员提供全面的资源支持</p>
+            <div class="hero-buttons">
+                <a href="#data" class="btn">浏览数据</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- 统计信息 -->
+        <section class="stats">
+            <div class="stat-card">
+                <i class="fas fa-vial"></i>
+                <h3 id="peptide-count">16</h3>
+                <p>多肽总数</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-frog"></i>
+                <h3 id="animal-count">4</h3>
+                <p>动物种类</p>
+            </div>
+        </section>
+
+        <!-- 数据表格区域 -->
+        <section id="data">
+            <div class="section-title">
+                <h2>多肽数据表</h2>
+            </div>
+            
+            <div class="controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="搜索肽段序列或名称...">
+                </div>
+                <div class="filters">
+                    <select id="animal-filter">
+                        <option value="">所有动物来源</option>
+                        <option value="鹿茸">鹿茸</option>
+                        <option value="海马">海马</option>
+                        <option value="穿山甲">穿山甲</option>
+                        <option value="海参">海参</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>英文名</th>
+                            <th>肽段序列</th>
+                            <th>长度</th>
+                            <th>分子量</th>
+                            <th>结构图</th>
+                        </tr>
+                    </thead>
+                    <tbody id="peptides-table-body">
+                        <!-- 数据将通过JavaScript填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 关于我们 -->
+        <section id="about">
+            <div class="section-title">
+                <h2>关于数据库</h2>
+            </div>
+            <div class="about-section">
+                <h3>数据库介绍</h3>
+                <p>动物药多肽数据库是一个专业的多肽信息平台，专注于收集和整理来自各种动物药材的多肽数据。我们的数据库提供详细的多肽序列、分子量、结构图等信息，为动物药研究提供科学支持。</p>
+                
+                <h3>数据来源</h3>
+                <p>本数据库数据来源于权威科研文献和实验室研究，所有数据都经过严格验证，确保信息的准确性和可靠性。</p>
+                
+                <h3>研究价值</h3>
+                <p>动物药多肽具有多种生物活性，包括抗菌、抗炎、抗肿瘤等作用。这些多肽在药物开发、功能食品和化妆品等领域具有广阔的应用前景。</p>
+                
+                <h3>联系方式</h3>
+                <p>如有任何问题或建议，请联系我们：</p>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> contact@peptide-db.org</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 北京中医药大学</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于数据库</h3>
+                    <p>本数据库致力于收集和整理各类动物药材中的多肽信息，为中医药研究和现代药物开发提供数据支持。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">首页</a></li>
+                        <li><a href="#data">数据浏览</a></li>
+                        <li><a href="#about">关于我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>研究团队</h3>
+                    <ul class="footer-links">
+                        <li>赵国栋 </li>
+                        <li>赵润坤 </li>
+                        <li>郭优优 </li>
+                        <li>任佳慧 </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 动物药多肽数据库. 保留所有权利. </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 图片模态框 -->
+    <div class="modal" id="image-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 id="modal-title">多肽结构图</h3>
+            <img id="modal-image" class="modal-image" src="" alt="多肽结构图">
+            <div id="modal-info"></div>
+        </div>
+    </div>
+
+    <script>
+        // 多肽数据
+        const peptidesData = [
+            {
+                name: "鹿茸",
+                englishName: "Cartialgenous",
+                sequence: "KDLGEDNFQGL",
+                length: 11,
+                mass: 618.3,
+                image: "images/kdlgednfqgl.png",
+                animal: "鹿茸"
+            },
+            {
+                name: "鹿茸",
+                englishName: "Cartialgenous",
+                sequence: "KHLDDLKGAF",
+                length: 10,
+                mass: 572.3,
+                image: "images/khlddlkgaf.png",
+                animal: "鹿茸"
+            },
+            {
+                name: "鹿茸",
+                englishName: "Cartialgenous",
+                sequence: "NQMIVV",
+                length: 6,
+                mass: 625.3,
+                image: "images/nqmivv.png",
+                animal: "鹿茸"
+            },
+            {
+                name: "鹿茸",
+                englishName: "Cartialgenous",
+                sequence: "NVDVVGA",
+                length: 7,
+                mass: 660.8,
+                image: "images/nvdvvga.png",
+                animal: "鹿茸"
+            },
+            {
+                name: "海马",
+                englishName: "Seahorse",
+                sequence: "暂无数据",
+                length: "暂无数据",
+                mass: "暂无数据",
+                image: null,
+                animal: "海马"
+            },
+            {
+                name: "穿山甲",
+                englishName: "Pangolin",
+                sequence: "暂无数据",
+                length: "暂无数据",
+                mass: "暂无数据",
+                image: null,
+                animal: "穿山甲"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "LSPGV",
+                length: 5,
+                mass: 471.3,
+                image: "images/lspgv.png",
+                animal: "海参"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "KVLLLLNFPLLL",
+                length: 12,
+                mass: 1394.9,
+                image: "images/kvllllnfplll.png",
+                animal: "海参"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "FEPAVP",
+                length: 6,
+                mass: 658.3,
+                image: "images/fepavp.png",
+                animal: "海参"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "FSWP",
+                length: 4,
+                mass: 535.2,
+                image: "images/fswp.png",
+                animal: "海参"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "EWLPN",
+                length: 5,
+                mass: 657.3,
+                image: "images/ewlpn.png",
+                animal: "海参"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "QWPAQ",
+                length: 5,
+                mass: 628.3,
+                image: "images/qwpaq.png",
+                animal: "海参"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "YTVVP",
+                length: 5,
+                mass: 577.3,
+                image: "images/ytvvp.png",
+                animal: "海参"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "SFLGP",
+                length: 5,
+                mass: 519.3,
+                image: "images/sflgp.png",
+                animal: "海参"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "LLLRL",
+                length: 5,
+                mass: 626.4,
+                image: "images/lllrl.png",
+                animal: "海参"
+            },
+            {
+                name: "海参",
+                englishName: "Sea Cucumber",
+                sequence: "KVLLLLL",
+                length: 7,
+                mass: 810.6,
+                image: "images/kvlllll.png",
+                animal: "海参"
+            }
+        ];
+
+        // 初始化函数
+        function init() {
+            // 填充表格
+            populatePeptidesTable(peptidesData);
+            
+            // 设置事件监听器
+            setupEventListeners();
+        }
+
+        // 填充多肽表格
+        function populatePeptidesTable(data) {
+            const tableBody = document.getElementById('peptides-table-body');
+            tableBody.innerHTML = '';
+            
+            data.forEach(peptide => {
+                const row = document.createElement('tr');
+                
+                // 处理图片显示
+                let imageHtml = '无图片';
+                if (peptide.image) {
+                    imageHtml = `<img src="${peptide.image}" 
+                                 alt="${peptide.name}结构图" 
+                                 class="peptide-img"
+                                 data-sequence="${peptide.sequence}"
+                                 data-name="${peptide.name}">`;
+                }
+                
+                // 处理暂无数据的情况
+                const sequence = peptide.sequence || '暂无数据';
+                const length = peptide.length || '暂无数据';
+                const mass = peptide.mass || '暂无数据';
+                
+                row.innerHTML = `
+                    <td>${peptide.name}</td>
+                    <td>${peptide.englishName}</td>
+                    <td>${sequence}</td>
+                    <td>${length}</td>
+                    <td>${mass}</td>
+                    <td>${imageHtml}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 搜索功能
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredData = peptidesData.filter(p => 
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    p.englishName.toLowerCase().includes(searchTerm) ||
+                    (p.sequence && p.sequence.toLowerCase().includes(searchTerm))
+                );
+                populatePeptidesTable(filteredData);
+            });
+            
+            // 动物筛选器
+            const animalFilter = document.getElementById('animal-filter');
+            animalFilter.addEventListener('change', function() {
+                const animal = this.value;
+                if (!animal) {
+                    populatePeptidesTable(peptidesData);
+                    return;
+                }
+                
+                const filteredData = peptidesData.filter(p => p.animal === animal);
+                populatePeptidesTable(filteredData);
+            });
+            
+            // 图片点击事件（事件委托）
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('peptide-img')) {
+                    const imgSrc = e.target.src;
+                    const sequence = e.target.dataset.sequence;
+                    const name = e.target.dataset.name;
+                    
+                    document.getElementById('modal-title').textContent = name;
+                    document.getElementById('modal-image').src = imgSrc;
+                    document.getElementById('modal-info').innerHTML = `
+                        <p><strong>肽段序列:</strong> ${sequence}</p>
+                        <p><strong>动物来源:</strong> ${name}</p>
+                    `;
+                    
+                    document.getElementById('image-modal').style.display = 'flex';
+                }
+            });
+            
+            // 关闭模态框
+            document.querySelector('.close-modal').addEventListener('click', function() {
+                document.getElementById('image-modal').style.display = 'none';
+            });
+            
+            // 点击模态框背景关闭
+            document.getElementById('image-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
