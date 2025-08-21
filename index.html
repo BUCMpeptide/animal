@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>濒危动物药多肽数据库</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #27ae60;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), #1a2530);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--accent);
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0.8rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.8)), url('https://images.unsplash.com/photo-1533035353720-f1c6a75cd8ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 5rem 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: 2px solid var(--accent);
+        }
+        
+        .btn:hover {
+            background-color: transparent;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            display: inline-block;
+            background-color: white;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--secondary);
+            z-index: 0;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 静态卡片 - 不可点击 */
+        .stat-card.static-card {
+            border: 2px solid #e0e0e0;
+            cursor: default;
+        }
+        
+        /* 可点击卡片 */
+        .stat-card.clickable-card {
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .stat-card.clickable-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-card.clickable-card.active {
+            background-color: #e8f4ff;
+            border: 2px solid var(--secondary);
+        }
+        
+        .stat-card.clickable-card.active::after {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 25px;
+            height: 25px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* 特别为"全部"卡片设计的更大图标容器 */
+        .animal-card.all-card .icon-container {
+            width: 100px;  /* 比普通图标大25% */
+            height: 100px; /* 比普通图标大25% */
+        }
+
+        /* 图标容器 */
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .stat-card .icon-container i {
+            font-size: 2.8rem;
+        }
+        
+        /* 图片图标样式 */
+        .icon-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: var(--transition);
+        }
+        
+        .stat-card.clickable-card:hover .animal-icon {
+            border-color: var(--secondary);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .stat-card p {
+            color: #777;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 40px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .search-box input:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        select {
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            background-color: white;
+            font-size: 1rem;
+            min-width: 150px;
+        }
+        
+        .data-table {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            font-weight: 600;
+        }
+        
+        tbody tr {
+            transition: var(--transition);
+        }
+        
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .peptide-img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .peptide-img:hover {
+            transform: scale(1.8);
+            z-index: 10;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .about-section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 3rem;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 1.5rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-section h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--accent);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #bbb;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bbb;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            position: relative;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #333;
+            transition: var(--transition);
+        }
+        
+        .close-modal:hover {
+            color: var(--accent);
+        }
+        
+        .modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        
+        .animal-filter-card {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .animal-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            border: 2px solid transparent;
+        }
+
+         /* 特别为"全部"卡片添加的类 */
+        .animal-card.all-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid var(--secondary);
+        }
+        
+        .animal-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+        }
+        
+        .animal-card.active {
+            border-color: var(--secondary);
+            background-color: #e8f4ff;
+        }
+        
+ /* 动物卡片图标容器 */
+        .animal-card .icon-container {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .animal-card .icon-container i {
+            font-size: 2.5rem;
+        }
+        
+        .animal-card .icon-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: var(--transition);
+        }
+        
+        .animal-card:hover .icon-container img {
+            transform: scale(1.1);
+        }
+
+        .animal-card i {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .animal-card h4 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .animal-card span {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .filter-indicator {
+            background-color: var(--secondary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-indicator i {
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .peptide-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .animal-card {
+                padding: 12px 18px;
+                min-width: 100px;
+            }
+
+             .animal-card .icon-container {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .stat-card .icon-container {
+                width: 60px;
+                height: 60px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                width: 100%;
+            }
+            
+            select {
+                width: 100%;
+            }
+            
+            .animal-card {
+                padding: 10px 15px;
+                min-width: 80px;
+            }
+            
+             .animal-card .icon-container {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .stat-card .icon-container {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-dna"></i>
+                <h1>濒危动物药<span>多肽</span>数据库</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">首页</a></li>
+                    <li><a href="#data">浏览数据</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>探索动物药多肽的奥秘</h2>
+            <p>本数据库收集整理了多种濒危动物药材中的多肽信息，包括肽段序列、分子量、结构图等数据，为研究人员提供全面的资源支持</p>
+            <div class="hero-buttons">
+                <a href="#data" class="btn">浏览数据</a>
+            </div>
+        </div>
+    </section>
+
+     <!-- 统计信息 -->
+    <section class="stats">
+        <div class="stat-card static-card">
+            <div class="icon-container">
+                <i class="fas fa-vial" style="color: #3498db;"></i>
+            </div>
+            <h3 id="total-peptides">0</h3>
+            <p>多肽总数</p>
+        </div>
+        <div class="stat-card static-card">
+            <div class="icon-container">
+                <i class="fas fa-frog" style="color: #27ae60;"></i>
+            </div>
+            <h3 id="animal-species">0</h3>
+            <p>动物种类</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- 动物筛选卡片 -->
+        <div class="animal-filter-card">
+              <div class="animal-card" data-animal="all">
+                <div class="icon-container">
+                    <img src="animal-icons/global.png" alt="全部数据"></img>
+                </div>
+                <h4>全部</h4>
+                <span class="count-display">0 条记录</span>
+            </div>
+            <div class="animal-card" data-animal="鹿茸">
+                <div class="icon-container">
+                    <img src="animal-icons/deer-antler.png" alt="鹿茸">
+                </div>
+                <h4>鹿茸</h4>
+                <span class="count-display">0 条记录</span>
+            </div>
+            <div class="animal-card" data-animal="海马">
+                <div class="icon-container">
+                    <img src="animal-icons/seahorse.png" alt="海马">
+                </div>
+                <h4>海马</h4>
+                <span class="count-display">0 条记录</span>
+            </div>
+            <div class="animal-card" data-animal="穿山甲">
+                <div class="icon-container">
+                    <img src="animal-icons/pangolin.png" alt="穿山甲">
+                </div>
+                <h4>穿山甲</h4>
+                <span class="count-display">0 条记录</span>
+            </div>
+            <div class="animal-card" data-animal="海参">
+                <div class="icon-container">
+                    <img src="animal-icons/sea-cucumber.png" alt="海参">
+                </div>
+                <h4>海参</h4>
+                <span class="count-display">0 条记录</span>
+            </div>
+            <!-- 新增的羚羊角卡片 -->
+            <div class="animal-card" data-animal="羚羊角">
+                <div class="icon-container">
+                    <img src="animal-icons/antelope-horn.png" alt="羚羊角">
+                </div>
+                <h4>羚羊角</h4>
+                <span class="count-display">0 条记录</span>
+            </div>
+        </div>
+        
+
+        <!-- 数据表格区域 -->
+        <section id="data">
+            <div class="section-title">
+                <h2>多肽数据表</h2>
+            </div>
+            
+            <div class="filter-indicator">
+                <span>当前筛选: <strong id="current-filter">全部数据</strong></span>
+                <i class="fas fa-times" id="clear-filter" style="display: none;"></i>
+            </div>
+            
+            <div class="controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="搜索肽段序列或名称...">
+                </div>
+                <div class="filters">
+                    <select id="animal-filter">
+                        <option value="">所有动物来源</option>
+                        <option value="鹿茸">鹿茸</option>
+                        <option value="海马">海马</option>
+                        <option value="穿山甲">穿山甲</option>
+                        <option value="海参">海参</option>
+                        <!-- 新增的羚羊角选项 -->
+                        <option value="羚羊角">羚羊角</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>英文名</th>
+                            <th>肽段序列</th>
+                            <th>长度</th>
+                            <th>分子量</th>
+                            <th>结构图</th>
+                        </tr>
+                    </thead>
+                    <tbody id="peptides-table-body">
+                        <!-- 数据将通过JavaScript填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 关于我们 -->
+        <section id="about">
+            <div class="section-title">
+                <h2>关于数据库</h2>
+            </div>
+            <div class="about-section">
+                <h3>数据库介绍</h3>
+                <p>濒危动物药多肽数据库是一个专业的多肽信息平台，专注于收集和整理来自各种濒危动物药材的多肽数据。我们的数据库提供详细的多肽序列、分子量、结构图等信息，为动物药研究提供科学支持。</p>
+                
+                <h3>数据来源</h3>
+                <p>本数据库数据来源于权威科研文献和实验室研究，所有数据都经过严格验证，确保信息的准确性和可靠性。</p>
+                
+                <h3>研究价值</h3>
+                <p>动物药多肽具有多种生物活性，包括抗菌、抗炎、抗肿瘤等作用。这些多肽在药物开发、功能食品和化妆品等领域具有广阔的应用前景。</p>
+                
+                <h3>联系方式</h3>
+                <p>如有任何问题或建议，请联系我们：</p>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> renjiahui689@163.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 北京中医药大学</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于数据库</h3>
+                    <p>本数据库致力于收集和整理濒危动物药材中的多肽信息，为中医药研究和现代药物开发提供数据支持。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">首页</a></li>
+                        <li><a href="#data">数据浏览</a></li>
+                        <li><a href="#about">关于我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>研究团队</h3>
+                    <ul class="footer-links">
+                        <li>赵国栋课题组 </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 动物药多肽数据库. 保留所有权利. </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 图片模态框 -->
+    <div class="modal" id="image-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 id="modal-title">多肽结构图</h3>
+            <img id="modal-image" class="modal-image" src="" alt="多肽结构图">
+            <div id="modal-info"></div>
+        </div>
+    </div>
+
+    <!-- 引入独立的数据文件 -->
+    <script src="peptides-data.js"></script>
+
+    <script>
+
+        // 初始化函数
+        function init() {
+            // 更新动物卡片计数
+            updateAnimalCounts();
+
+            // 更新统计信息
+            updateStatistics();
+
+            // 填充表格
+            populatePeptidesTable(peptidesData);
+
+            // 设置事件监听器
+            setupEventListeners();
+        }
+
+        // 更新动物卡片计数
+        function updateAnimalCounts() {
+            // 统计每种动物的数量
+            const animalCounts = {};
+            peptidesData.forEach(peptide => {
+                if (!animalCounts[peptide.animal]) {
+                    animalCounts[peptide.animal] = 0;
+                }
+                animalCounts[peptide.animal]++;
+            });
+            
+            // 更新全部卡片
+            document.querySelector('.animal-card[data-animal="all"] .count-display').textContent = 
+                `${peptidesData.length} 条记录`;
+            
+            // 更新其他动物卡片
+            document.querySelectorAll('.animal-card').forEach(card => {
+                const animal = card.dataset.animal;
+                if (animal !== 'all' && animalCounts[animal]) {
+                    card.querySelector('.count-display').textContent = 
+                        `${animalCounts[animal]} 条记录`;
+                }
+            });
+        }
+
+        // 更新统计信息
+        function updateStatistics() {
+            // 统计动物种类
+            const animalSet = new Set();
+            peptidesData.forEach(peptide => {
+                animalSet.add(peptide.animal);
+            });
+            
+            document.getElementById('total-peptides').textContent = peptidesData.length;
+            document.getElementById('animal-species').textContent = animalSet.size;
+        }
+
+        // 填充多肽表格
+        function populatePeptidesTable(data) {
+            const tableBody = document.getElementById('peptides-table-body');
+            tableBody.innerHTML = '';
+            
+            data.forEach(peptide => {
+                const row = document.createElement('tr');
+                
+                // 处理图片显示
+                let imageHtml = '无图片';
+                if (peptide.image) {
+                    imageHtml = `<img src="${peptide.image}" 
+                                 alt="${peptide.name}结构图" 
+                                 class="peptide-img"
+                                 data-sequence="${peptide.sequence}"
+                                 data-name="${peptide.name}">`;
+                }
+                
+                // 处理暂无数据的情况
+                const sequence = peptide.sequence || '暂无数据';
+                const length = peptide.length || '暂无数据';
+                const mass = peptide.mass || '暂无数据';
+                
+                row.innerHTML = `
+                    <td>${peptide.name}</td>
+                    <td>${peptide.englishName}</td>
+                    <td>${sequence}</td>
+                    <td>${length}</td>
+                    <td>${mass}</td>
+                    <td>${imageHtml}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 搜索功能
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredData = peptidesData.filter(p => 
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    p.englishName.toLowerCase().includes(searchTerm) ||
+                    (p.sequence && p.sequence.toLowerCase().includes(searchTerm))
+                );
+                populatePeptidesTable(filteredData);
+            });
+            
+            // 动物筛选器
+            const animalFilter = document.getElementById('animal-filter');
+            animalFilter.addEventListener('change', function() {
+                const animal = this.value;
+                if (!animal) {
+                    populatePeptidesTable(peptidesData);
+                    updateFilterIndicator('全部数据');
+                    updateActiveCards('all');
+                    return;
+                }
+                
+                const filteredData = peptidesData.filter(p => p.animal === animal);
+                populatePeptidesTable(filteredData);
+                updateFilterIndicator(`动物来源: ${animal}`);
+                updateActiveCards(animal);
+            });
+            
+            // 图片点击事件（事件委托）
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('peptide-img')) {
+                    const imgSrc = e.target.src;
+                    const sequence = e.target.dataset.sequence;
+                    const name = e.target.dataset.name;
+                    
+                    document.getElementById('modal-title').textContent = name;
+                    document.getElementById('modal-image').src = imgSrc;
+                    document.getElementById('modal-info').innerHTML = `
+                        <p><strong>肽段序列:</strong> ${sequence}</p>
+                        <p><strong>动物来源:</strong> ${name}</p>
+                    `;
+                    
+                    document.getElementById('image-modal').style.display = 'flex';
+                }
+            });
+            
+            // 关闭模态框
+            document.querySelector('.close-modal').addEventListener('click', function() {
+                document.getElementById('image-modal').style.display = 'none';
+            });
+            
+            // 点击模态框背景关闭
+            document.getElementById('image-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+            
+            // 动物卡片点击事件
+            document.querySelectorAll('.animal-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const animal = this.dataset.animal;
+                    
+                    if (animal === 'all') {
+                        // 显示所有数据
+                        populatePeptidesTable(peptidesData);
+                        updateFilterIndicator('全部数据');
+                        document.getElementById('animal-filter').value = '';
+                        document.getElementById('clear-filter').style.display = 'none';
+                    } else {
+                        // 筛选特定动物
+                        const filteredData = peptidesData.filter(p => p.animal === animal);
+                        populatePeptidesTable(filteredData);
+                        updateFilterIndicator(`动物来源: ${animal}`);
+                        document.getElementById('animal-filter').value = animal;
+                        document.getElementById('clear-filter').style.display = 'inline-block';
+                    }
+                    
+                    // 更新活动卡片状态
+                    updateActiveCards(animal);
+                });
+            });
+            
+            // 统计卡片点击事件
+            document.querySelectorAll('.stat-card').forEach(card => {
+                if (card.dataset.animal) {
+                    card.addEventListener('click', function() {
+                        const animal = this.dataset.animal;
+                        const filteredData = peptidesData.filter(p => p.animal === animal);
+                        populatePeptidesTable(filteredData);
+                        updateFilterIndicator(`动物来源: ${animal}`);
+                        document.getElementById('animal-filter').value = animal;
+                        updateActiveCards(animal);
+                        document.getElementById('clear-filter').style.display = 'inline-block';
+                    });
+                }
+            });
+            
+            // 清除筛选按钮
+            document.getElementById('clear-filter').addEventListener('click', function(e) {
+                e.stopPropagation();
+                populatePeptidesTable(peptidesData);
+                updateFilterIndicator('全部数据');
+                document.getElementById('animal-filter').value = '';
+                updateActiveCards('all');
+                this.style.display = 'none';
+            });
+        }
+        
+        // 更新筛选指示器
+        function updateFilterIndicator(text) {
+            document.getElementById('current-filter').textContent = text;
+        }
+        
+        // 更新活动卡片状态
+        function updateActiveCards(selectedAnimal) {
+            // 重置所有卡片
+            document.querySelectorAll('.animal-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // 设置当前选中的卡片
+            const animalCard = document.querySelector(`.animal-card[data-animal="${selectedAnimal}"]`);
+            if (animalCard) animalCard.classList.add('active');
+            
+            // 设置统计卡片的活跃状态
+            document.getElementById('total-peptides-card').classList.add('active');
+            
+            if (selectedAnimal !== 'all') {
+                const statCard = document.querySelector(`.stat-card[data-animal="${selectedAnimal}"]`);
+                if (statCard) statCard.classList.add('active');
+            }
+        }
+
+        // 设置调试工具
+        function setupDebugTools() {
+            const showBorders = document.getElementById('show-borders');
+            const iconSize = document.getElementById('icon-size');
+            const sizeValue = document.getElementById('size-value');
+            
+            showBorders.addEventListener('change', function() {
+                const containers = document.querySelectorAll('.icon-container');
+                if (this.checked) {
+                    containers.forEach(container => {
+                        container.style.border = '2px solid red';
+                    });
+                } else {
+                    containers.forEach(container => {
+                        container.style.border = 'none';
+                    });
+                }
+            });
+            
+            iconSize.addEventListener('input', function() {
+                const size = this.value + 'px';
+                sizeValue.textContent = size;
+                
+                // 更新所有图标容器尺寸
+                const animalContainers = document.querySelectorAll('.animal-card .icon-container');
+                const statContainers = document.querySelectorAll('.stat-card .icon-container');
+                
+                animalContainers.forEach(container => {
+                    container.style.width = size;
+                    container.style.height = size;
+                });
+                
+                statContainers.forEach(container => {
+                    container.style.width = size;
+                    container.style.height = size;
+                });
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
